@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management ERP</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">SSA</div>
+                <h2>Inventory</h2>
+            </div>
+ <!--menu bar stores-->  
+ 
+ 
+<button class="stores-btn" onclick="window.location.href='index.html'">
+    Home
+</button>
+
+
+
+<div class="menu-dropdown">
+    <button class="stores-btn" onclick="toggleStoresDropdown()">
+         Stores 
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+    </button>
+    <nav class="sidebar-menu dropdown-content" id="storesMenu">
+        <a href="grn.html" class="menu-item"><i class="fa-solid fa-border-all"></i> Goods Receipt Note</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Material Issue Note</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Material Requestion Note</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Material Transfer</a>
+        <a href="#" class="menu-item active"><i class="fa-solid fa-list-check"></i> Stock Report</a>
+    </nav>
+</div>
+<!--menu bar cutting-->
+<div class="Menu-dropdown">
+    <button class="cutting-btn" onclick="toggleCuttingDropdown()">
+         Cutting 
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+    </button>
+    <nav class="sidebar-menu dropdown-content" id="cuttingMenu">
+        <a href="#" class="menu-item"><i class="fa-solid fa-border-all"></i> Fabric Utilization Report</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Laysheet Update</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Cutting Wip</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Line Input</a>
+        <a href="#" class="menu-item active"><i class="fa-solid fa-list-check"></i> Recut</a>
+    </nav>
+</div>
+<!--menu bar production inquiry-->
+<div class="Menu-dropdown">
+    <button class="production-btn" onclick="toggleproductionDropdown()">
+         Production 
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+    </button>
+    <nav class="sidebar-menu dropdown-content" id="productionMenu">
+        <a href="#" class="menu-item"><i class="fab fa-accusoft"></i> Bom</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Consumption</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Line Rejection</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Line Output</a>
+        <a href="#" class="menu-item active"><i class="fa-solid fa-list-check"></i> Job Details</a>
+    </nav>
+</div>
+
+<!--menu bar Packing-->
+<div class="Menu-dropdown">
+    <button class="packing-btn" onclick="togglepackingDropdown()">
+         Production 
+        <i class="fa-solid fa-chevron-down arrow-icon"></i>
+    </button>
+    <nav class="sidebar-menu dropdown-content" id="packingMenu">
+        <a href="#" class="menu-item"><i class="fab fa-accusoft"></i> Pending shipment</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Packing In</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Stock Report</a>
+        <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Deduction</a>
+        <a href="#" class="menu-item active"><i class="fa-solid fa-list-check"></i> Shipment Details</a>
+    </nav>
+</div>
+
+
+<br>
+<!--menu bar Help-->
+<div class="Help">Help
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item"><i class="fa-regular fa-circle-question"></i> How to Use</a>
+            </div></div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Top Bar -->
+            <header class="top-bar">
+                <h1 class="page-title">SSA ERP SYSTEM</h1>
+                <div class="header-actions">
+                    <span id="userBadge" class="user-badge">SSA</span>
+                    <button class="btn btn-emerald"><i class="fa-solid fa-file-arrow-up"></i> Kavindu</button>
+                    <button onclick="logout()" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                </div>
+            </header>
+
+            <!-- Action Controls / Filters -->
+            <div class="filter-bar">
+                <div class="filter-pills">
+                    <button class="pill-btn">Category <span class="badge">0</span></button>
+                    <button class="pill-btn">Warehouse <span class="badge">0</span></button>
+                    <button class="pill-btn">Supplier <span class="badge">0</span></button>
+                    <button class="pill-btn">Status <span class="badge">0</span></button>
+                    <button class="pill-btn reset-btn">Reset All</button>
+                </div>
+            </div>
+
+            <!-- Add/Edit Form Card (Admin Only) -->
+            <div class="content-card" id="productFormCard">
+                <h3 id="formTitle">Add New Product</h3>
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-row">
+                        <input type="text" id="name" placeholder="Product Name" required>
+                        <input type="text" id="sku" placeholder="SKU Code" required>
+                        <input type="number" id="stock" placeholder="Stock Quantity" min="0" required>
+                        <input type="number" id="price" placeholder="Unit Price (LKR)" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="saveBtn" class="btn btn-emerald">Save Product</button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary hidden" onclick="resetForm()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Inventory Data Table Container -->
+            <div class="content-card table-card">
+                <div class="table-toolbar">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterInventory()">
+                    </div>
+                    <button class="btn btn-outline-emerald"><i class="fa-solid fa-file-export"></i> Export CSV</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item ID</th>
+                                <th>Product Name</th>
+                                <th>Stock Quantity</th>
+                                <th>Unit Price (LKR)</th>
+                                <th>Total Value (LKR)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goods Receipt Note - ERP</title>
+    <link rel="stylesheet" href="grn.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">SSA</div>
+                <h2>Inventory</h2>
+            </div>
+
+            <!-- Home Button -->
+            <button class="stores-btn" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-house"></i> Home
+            </button>
+
+            <!-- Stores Menu -->
+            <div class="menu-dropdown">
+                <button class="menu-dropdown-btn stores-btn" onclick="toggleDropdown('storesMenu', this)">
+                    Stores 
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+                <nav class="sidebar-menu dropdown-content" id="storesMenu">
+                    <a href="grn.html" class="menu-item active"><i class="fa-solid fa-border-all"></i> Goods Receipt Note</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Material Issue Note</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Material Requestion Note</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Material Transfer</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-list-check"></i> Stock Report</a>
+                </nav>
+            </div>
+
+            <!-- Cutting Menu -->
+            <div class="menu-dropdown">
+                <button class="menu-dropdown-btn cutting-btn" onclick="toggleDropdown('cuttingMenu', this)">
+                    Cutting 
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+                <nav class="sidebar-menu dropdown-content" id="cuttingMenu">
+                    <a href="#" class="menu-item"><i class="fa-solid fa-border-all"></i> Fabric Utilization Report</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Laysheet Update</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Cutting Wip</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Line Input</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-list-check"></i> Recut</a>
+                </nav>
+            </div>
+
+            <!-- Production Menu -->
+            <div class="menu-dropdown">
+                <button class="menu-dropdown-btn production-btn" onclick="toggleDropdown('productionMenu', this)">
+                    Production 
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+                <nav class="sidebar-menu dropdown-content" id="productionMenu">
+                    <a href="#" class="menu-item"><i class="fab fa-accusoft"></i> Bom</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Consumption</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Line Rejection</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Line Output</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-list-check"></i> Job Details</a>
+                </nav>
+            </div>
+
+            <!-- Packing Menu -->
+            <div class="menu-dropdown">
+                <button class="menu-dropdown-btn packing-btn" onclick="toggleDropdown('packingMenu', this)">
+                    Packing 
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </button>
+                <nav class="sidebar-menu dropdown-content" id="packingMenu">
+                    <a href="#" class="menu-item"><i class="fab fa-accusoft"></i> Pending shipment</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-chart-line"></i> Packing In</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-layer-group"></i> Stock Report</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-clock"></i> Deduction</a>
+                    <a href="#" class="menu-item"><i class="fa-solid fa-list-check"></i> Shipment Details</a>
+                </nav>
+            </div>
+
+            <!-- Help Section -->
+            <div class="sidebar-footer">
+                <a href="#" class="menu-item"><i class="fa-regular fa-circle-question"></i> How to Use</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <h2><i class="fa-solid fa-border-all"></i> Goods Receipt Note (GRN)</h2>
+
+            <!-- GRN Form -->
+            <div class="form-container">
+                <h3>Add New GRN</h3>
+                <form id="grnForm">
+                    <div class="form-group">
+                        <label>Item Code</label>
+                        <input type="text" id="Itemcode" required placeholder="Enter Item Code">
+                    </div> 
+
+                    <div class="form-group">
+                        <label>Supplier Name</label>
+                        <input type="text" id="supplier" required placeholder="Enter supplier">
+                    </div>
+                    <div class="form-group">
+                        <label>Item Name / Material</label>
+                        <input type="text" id="itemName" required placeholder="Enter item name">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="quantity" required placeholder="Enter quantity">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit Price (LKR)</label>
+                        <input type="number" id="unitPrice" required placeholder="Enter unit price">
+                    </div>
+                    <br>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-plus"></i> Save GRN</button>
+                </form>
+            </div>
+
+            <!-- GRN List Table -->
+            <div class="table-container">
+                <h3>GRN History</h3>
+                <table class="grn-table">
+                    <thead>
+                        <tr>
+                            <th>GRN ID</th>
+                            <th>Item Code</th>
+                            <th>Supplier</th>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grnTableBody">
+                        <!-- Data will be dynamically loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="grn.js"></script>
+</body>
+</html>
