@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -15,7 +14,6 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 const GRN_FILE = path.join(__dirname, 'grn.json');
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Kavin-Emma:<0713952438-Kk>@cluster0.piron4e.mongodb.net/?appName=Cluster0';
 
 // JSON File එකෙන් දත්ත Load කරන Function එක
 function loadGRNData() {
@@ -81,7 +79,7 @@ let inventory = [
     { id: 2, name: 'Care Label', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
-// GRN List එක Load කරගැනීම
+// GRN List එක Load කරගැනීම (එක් වරක් පමණක් Declare කර ඇත)
 let grnList = loadGRNData();
 
 // Auth Middleware
@@ -164,7 +162,7 @@ app.post('/api/grn', authenticateToken, (req, res) => {
         date: new Date()
     };
     grnList.push(newGRN);
-    saveGRNData();
+    saveGRNData(); // File එකට Save කිරීම
 
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
@@ -176,21 +174,15 @@ app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     grnList = grnList.filter(item => Number(item.id) !== id);
 
     if (grnList.length < initialLength) {
-        saveGRNData();
+        saveGRNData(); // Delete වූ විට Update කිරීම
         res.json({ success: true, message: "GRN Cancelled successfully!" });
     } else {
         res.status(404).json({ success: false, message: "GRN item not found!" });
     }
 });
 
-// MongoDB එකට සම්බන්ධ වී Server එක ක්‍රියාත්මක කිරීම
-mongoose.connect(MONGO_URI)
-  .then(() => {
-    console.log('MongoDB සාර්ථකව සම්බන්ධ විය!');
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`ERP Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('MongoDB සම්බන්ධ වීමේ දෝෂයක්:', err);
-  });
+// Server Listener
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`ERP Server running on port ${PORT}`);
+});
+
