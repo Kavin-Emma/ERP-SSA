@@ -26,12 +26,19 @@ const users = [
         passwordHash: bcrypt.hashSync('staff123', 10),
         name: 'Store Staff',
         role: 'staff'
-    }
+    },
+    {
+        id: 1,
+        email: 'Kavindu-erp.com',
+        passwordHash: bcrypt.hashSync('Kavindu41', 10),
+        name: 'Kavindu',
+        role: 'Data Entry'
+    },     
 ];
 
 let inventory = [
-    { id: 1, name: 'Laptop', sku: 'LP-001', stock: 10, price: 150000 },
-    { id: 2, name: 'Mouse', sku: 'MS-002', stock: 3, price: 2500 }
+    { id: 1, name: 'Fabric', sku: 'LP-001', stock: 10, price: 150000 },
+    { id: 2, name: 'Care Label', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
 let grnList = [
