@@ -123,11 +123,14 @@ app.post('/api/grn', authenticateToken, (req, res) => {
 
 // GRN Cancel කිරීම හෝ Delete කිරීම සඳහා නව Route එක
 app.delete('/api/grn/:id', authenticateToken, (req, res) => {
-    const { id } = req.params;
-    grnList = grnList.filter(item => item.id != id);
-    res.json({ success: true, message: "GRN Cancelled successfully!" });
-});
+    const id = parseInt(req.params.id); // ID එක Number එකක් බවට හරවා ගැනීම
 
-app.listen(PORT, () => {
-    console.log(`ERP Server running on port ${PORT}`);
+    const initialLength = grnList.length;
+    grnList = grnList.filter(item => Number(item.id) !== id);
+
+    if (grnList.length < initialLength) {
+        res.json({ success: true, message: "GRN Cancelled successfully!" });
+    } else {
+        res.status(404).json({ success: false, message: "GRN item not found!" });
+    }
 });
