@@ -148,19 +148,31 @@ function renderGRNTable(grnList) {
 }
 
 // GRN Cancel කිරීමේ Function එක
-function cancelGRN(button) {
-    if (confirm('Are you sure you want to cancel this GRN?')) {
-        const row = button.closest('tr');
-        row.classList.add('cancelled-row');
+async function cancelGRN(grnId) {
+    if (!confirm('Are you sure you want to cancel this GRN?')) return;
 
-        const statusCell = row.querySelector('.status-cell');
-        if (statusCell) {
-            statusCell.innerHTML = '<span class="badge badge-cancelled">Cancelled</span>';
-        }
+    const token = localStorage.getItem('erp_token');
 
-        const actionCell = row.querySelector('.action-cell');
-        if (actionCell) {
-            actionCell.innerHTML = '<span class="text-disabled">Cancelled</span>';
+    try {
+        const response = await fetch(`/api/grn/${grnId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            alert('GRN Cancelled Successfully!');
+            // Server එකෙන් සාර්ථකව Delete වූ පසු UI එක Refresh කිරීම/නැවත Data Load කිරීම
+            loadGRNList(); 
+        } else {
+            alert('Failed to cancel GRN: ' + (data.message || 'Error occurred'));
         }
+    } catch (error) {
+        console.error('Error cancelling GRN:', error);
+        alert('Server Connection Error while cancelling GRN');
     }
 }

@@ -100,7 +100,9 @@ app.delete('/api/inventory/:id', authenticateToken, (req, res) => {
 });
 
 // GRN Routes
+// GRN Routes
 app.get('/api/grn', authenticateToken, (req, res) => {
+    // Cancel නොවූ (Active) GRN පමණක් හෝ සියලුම GRN යැවීම
     res.json({ success: true, data: grnList });
 });
 
@@ -112,10 +114,28 @@ app.post('/api/grn', authenticateToken, (req, res) => {
         itemName,
         quantity: Number(quantity),
         unitPrice: Number(unitPrice),
+        status: 'Active', // Default status එක Active ලෙස සැකසීම
         date: new Date()
     };
     grnList.push(newGRN);
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
+});
+
+// GRN Cancel කිරීම හෝ Delete කිරීම සඳහා නව Route එක
+app.delete('/api/grn/:id', authenticateToken, (req, res) => {
+    const { id } = req.params;
+    
+    // Memory Array එකෙන් GRN එක සම්පූර්ණයෙන්ම ඉවත් කිරීම
+    grnList = grnList.filter(item => item.id != id);
+
+    /* (සටහන: Array එකෙන් Delete කරන්නේ නැතිව Status එක 'Cancelled' කිරීමට අවශ්‍ය නම් පහත කේතය භාවිත කරන්න)
+    const grn = grnList.find(item => item.id == id);
+    if (grn) {
+        grn.status = 'Cancelled';
+    }
+    */
+
+    res.json({ success: true, message: "GRN Cancelled successfully!" });
 });
 
 app.listen(PORT, () => {
