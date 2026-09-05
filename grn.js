@@ -154,7 +154,7 @@ async function cancelGRN(grnId) {
     const token = localStorage.getItem('erp_token');
 
     try {
-        const response = await fetch(`/api/grn/${grnId}`, {
+        const response = await fetch(`https://erp-ssa-production.up.railway.app/api/grn/${grnId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -162,17 +162,28 @@ async function cancelGRN(grnId) {
             }
         });
 
-        const data = await response.json();
+        const contentType = response.headers.get('content-type');
+        let data = {};
+
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const rawText = await response.text();
+            throw new Error(`Server status ${response.status}: ${rawText.substring(0, 100)}`);
+        }
 
         if (response.ok && data.success) {
             alert('GRN Cancelled Successfully!');
-            // Server එකෙන් සාර්ථකව Delete වූ පසු UI එක Refresh කිරීම/නැවත Data Load කිරීම
-            loadGRNList(); 
+            if (typeof loadGRNList === 'function') {
+                loadGRNList();
+            } else {
+                window.location.reload();
+            }
         } else {
             alert('Failed to cancel GRN: ' + (data.message || 'Error occurred'));
         }
     } catch (error) {
         console.error('Error cancelling GRN:', error);
-        alert('Server Connection Error while cancelling GRN');
+        alert('Server Connection Error while cancelling GRN: ' + error.message);
     }
 }

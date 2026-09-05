@@ -124,17 +124,7 @@ app.post('/api/grn', authenticateToken, (req, res) => {
 // GRN Cancel කිරීම හෝ Delete කිරීම සඳහා නව Route එක
 app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     const { id } = req.params;
-    
-    // Memory Array එකෙන් GRN එක සම්පූර්ණයෙන්ම ඉවත් කිරීම
     grnList = grnList.filter(item => item.id != id);
-
-    /* (සටහන: Array එකෙන් Delete කරන්නේ නැතිව Status එක 'Cancelled' කිරීමට අවශ්‍ය නම් පහත කේතය භාවිත කරන්න)
-    const grn = grnList.find(item => item.id == id);
-    if (grn) {
-        grn.status = 'Cancelled';
-    }
-    */
-
     res.json({ success: true, message: "GRN Cancelled successfully!" });
 });
 
