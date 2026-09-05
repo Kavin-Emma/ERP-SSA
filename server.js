@@ -11,6 +11,7 @@ app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
+const GRN_FILE = path.join(__dirname, 'grn.json');
 
 const users = [
     {
@@ -43,7 +44,7 @@ let inventory = [
 
 const fs = require('fs');
 const path = require('path');
-const GRN_FILE = path.join(__dirname, 'grn_data.json');
+
 
 let grnList = [
     { 
@@ -153,7 +154,35 @@ app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     }
 });
 
+function loadGRNData() {
+    try {
+        if (fs.existsSync(GRN_FILE)) {
+            const data = fs.readFileSync(GRN_FILE, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (err) {
+        console.error("Error reading file:", err);
+    }
+    return [
+        { 
+            id: 1, 
+            itemCode: "ITM-001", 
+            supplier: "Apex Textiles", 
+            itemName: "Cotton Fabric", 
+            quantity: 500, 
+            unitPrice: 250, 
+            status: "Active", 
+            date: new Date() 
+        }
+    ];
+    
+}
+ grnList = loadGRNData();
+
+
+
 // Server Listener (අවසානයේම තබන්න)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`ERP Server running on port ${PORT}`);
 });
+

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "itemCode": "ITM-001",
+    "supplier": "Apex Textiles",
+    "itemName": "Cotton Fabric",
+    "quantity": 500,
+    "unitPrice": 250,
+    "status": "Active",
+    "date": "2026-09-05T00:00:00.000Z"
+  }
+]
