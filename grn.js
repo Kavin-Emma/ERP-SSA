@@ -55,6 +55,7 @@ function renderGRNTable(grnList) {
             <td>${item.quantity || 0}</td>
             <td>${item.unitPrice || 0}</td>
             <td>${total}</td>
+            <td>${formattedDate}</td>
             <td class="action-cell">
                 <button onclick="cancelGRN(${item.id})" class="btn btn-danger">
                     <i class="fa-solid fa-xmark"></i> Cancel
