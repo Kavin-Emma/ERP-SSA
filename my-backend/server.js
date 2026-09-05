@@ -7,7 +7,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const JWT_SECRET = 'your_super_secret_jwt_key';
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 
 // Mock User Data (Admin & Staff)
 const users = [
@@ -31,6 +32,11 @@ const users = [
 let inventory = [
     { id: 1, name: 'Laptop', sku: 'LP-001', stock: 10, price: 150000 },
     { id: 2, name: 'Mouse', sku: 'MS-002', stock: 3, price: 2500 }
+];
+
+// Mock GRN Data
+let grnList = [
+    { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
 ];
 
 // Auth Middleware
@@ -109,30 +115,12 @@ app.delete('/api/inventory/:id', authenticateToken, (req, res) => {
     res.json({ success: true, message: 'Item deleted' });
 });
 
-// Start Server
-app.listen(5000, () => {
-    console.log('ERP Server running on http://localhost:5000');
-
-// grn.html
-const express = require('express');
-const cors = require('cors'); // npm install cors
-const app = express();
-const PORT = 5000;
-
-app.use(express.json());
-app.use(cors()); // Front-end & Back-end සම්බන්ධ කිරීමට
-
-// Temporary Array (Database එකක් නැතිව data තබා ගැනීමට)
-let grnList = [
-    { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
-];
-
-// 1. Get all GRNs (ලබාගත් GRN ලැයිස්තුව ලබා ගැනීම)
+// 6. Get all GRNs
 app.get('/api/grn', (req, res) => {
     res.json(grnList);
 });
 
-// 2. Add new GRN (නව GRN එකක් ඇතුළත් කිරීම)
+// 7. Add new GRN
 app.post('/api/grn', (req, res) => {
     const { supplier, itemName, quantity, unitPrice } = req.body;
     
@@ -149,9 +137,7 @@ app.post('/api/grn', (req, res) => {
     res.status(201).json({ message: "GRN saved successfully!", data: newGRN });
 });
 
+// Start Server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:5000`);
+    console.log(`ERP Server running on port ${PORT}`);
 });
-    
-});
-
