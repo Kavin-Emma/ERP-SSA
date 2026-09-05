@@ -67,7 +67,7 @@ function renderGRNTable(grnList) {
 // 3. නව GRN එකක් එකතු කිරීම (Submit)
 async function handleGRNSubmit(e) {
     e.preventDefault();
-
+    const itemcode = document.getElementById('Item Code').value;
     const supplier = document.getElementById('supplier').value;
     const itemName = document.getElementById('itemName').value;
     const quantity = document.getElementById('quantity').value;
