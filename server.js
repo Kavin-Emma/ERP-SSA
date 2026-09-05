@@ -28,12 +28,12 @@ const users = [
         role: 'staff'
     },
     {
-        id: 1,
-        email: 'Kavindu-erp.com',
+        id: 3, // Unique ID එකක් ලබා දෙන ලදී
+        email: 'Kavindu@erp.com',
         passwordHash: bcrypt.hashSync('Kavindu41', 10),
         name: 'Kavindu',
         role: 'Data Entry'
-    },     
+    }     
 ];
 
 let inventory = [
@@ -42,7 +42,16 @@ let inventory = [
 ];
 
 let grnList = [
-    { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
+    { 
+        id: 1, 
+        itemCode: "ITM-001",
+        supplier: "Apex Textiles", 
+        itemName: "Cotton Fabric", 
+        quantity: 500, 
+        unitPrice: 250, 
+        status: "Active",
+        date: new Date() 
+    }
 ];
 
 function authenticateToken(req, res, next) {
@@ -112,19 +121,35 @@ app.get('/api/grn', authenticateToken, (req, res) => {
 });
 
 app.post('/api/grn', authenticateToken, (req, res) => {
-    const { supplier, itemName, quantity, unitPrice } = req.body;
+    const { itemCode, supplier, itemName, quantity, unitPrice } = req.body;
     const newGRN = {
-        id: grnList.length + 1,
+        id: Date.now(),
+        itemCode: itemCode || `ITM-00${grnList.length + 1}`,
         supplier,
         itemName,
         quantity: Number(quantity),
         unitPrice: Number(unitPrice),
+        status: 'Active',
         date: new Date()
     };
     grnList.push(newGRN);
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
 
-app.listen(PORT, () => {
+app.delete('/api/grn/:id', authenticateToken, (req, res) => {
+    const id = parseInt(req.params.id);
+    const initialLength = grnList.length;
+
+    grnList = grnList.filter(item => Number(item.id) !== id);
+
+    if (grnList.length < initialLength) {
+        res.json({ success: true, message: "GRN Cancelled successfully!" });
+    } else {
+        res.status(404).json({ success: false, message: "GRN item not found!" });
+    }
+});
+
+// Server Listener (අවසානයේම තබන්න)
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`ERP Server running on port ${PORT}`);
 });
