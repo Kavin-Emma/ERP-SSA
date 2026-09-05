@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('https://erp-ssa-production.up.railway.app/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -13,15 +13,15 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify({ email, password })
         });
 
-        // Response එක JSON ද යන්න පරීක්ෂා කිරීම
+        // Response එක JSON ද නැද්ද යන්න පරීක්ෂා කිරීම
         const contentType = response.headers.get('content-type');
         let data = {};
-        
+
         if (contentType && contentType.includes('application/json')) {
             data = await response.json();
         } else {
             const rawText = await response.text();
-            throw new Error(`Server returned non-JSON response (${response.status}): ${rawText.substring(0, 100)}`);
+            throw new Error(`Server returned status ${response.status}. Response is not JSON.`);
         }
 
         if (response.ok && data.success) {
