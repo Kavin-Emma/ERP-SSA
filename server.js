@@ -41,6 +41,10 @@ let inventory = [
     { id: 2, name: 'Care Label', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
+const fs = require('fs');
+const path = require('path');
+const GRN_FILE = path.join(__dirname, 'grn_data.json');
+
 let grnList = [
     { 
         id: 1, 
