@@ -1,6 +1,51 @@
+const API_BASE_URL = 'https://erp-ssa-production.up.railway.app/api';
+
+// Page එක Load වන විට Inventory Data ලබා ගැනීම
+document.addEventListener('DOMContentLoaded', () => {
+    fetchInventory();
+});
+
+// Backend එකෙන් Inventory Data ලබා ගැනීමේ Function එක
+async function fetchInventory() {
+    const token = localStorage.getItem('erp_token');
+
+    if (!token) {
+        alert('Session expired or unauthorized. Please login again.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/inventory`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            renderInventoryTable(data.data);
+        } else {
+            console.error('Failed to fetch inventory:', data.message);
+            if (response.status === 401 || response.status === 403) {
+                alert('Session expired. Please login again.');
+                window.location.href = 'index.html';
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
+    }
+}
+
+// Table Rendering Function
 function renderInventoryTable(items) {
     const user = JSON.parse(localStorage.getItem('erp_user') || '{}');
     const tableBody = document.getElementById('inventoryTable');
+    if (!tableBody) return;
+    
     tableBody.innerHTML = '';
 
     if (!items || items.length === 0) {
@@ -34,34 +79,39 @@ function renderInventoryTable(items) {
     });
 }
 
+// UI Dropdown Functions
 function toggleStoresDropdown() {
     const menu = document.getElementById('storesMenu');
     const btn = document.querySelector('.stores-btn');
-    
-    menu.classList.toggle('show');
-    btn.classList.toggle('active');
+    if (menu && btn) {
+        menu.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
 }
 
 function toggleCuttingDropdown() {
     const menu = document.getElementById('cuttingMenu');
     const btn = document.querySelector('.cutting-btn');
-    
-    menu.classList.toggle('show');
-    btn.classList.toggle('active');
+    if (menu && btn) {
+        menu.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
 }
 
 function toggleproductionDropdown() {
     const menu = document.getElementById('productionMenu');
     const btn = document.querySelector('.production-btn');
-    
-    menu.classList.toggle('show');
-    btn.classList.toggle('active');
+    if (menu && btn) {
+        menu.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
 }
 
 function togglepackingDropdown() {
     const menu = document.getElementById('packingMenu');
     const btn = document.querySelector('.packing-btn');
-    
-    menu.classList.toggle('show');
-    btn.classList.toggle('active');
+    if (menu && btn) {
+        menu.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
 }
