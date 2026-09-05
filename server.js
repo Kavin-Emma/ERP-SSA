@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
@@ -13,6 +15,40 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 const GRN_FILE = path.join(__dirname, 'grn.json');
 
+// JSON File එකෙන් දත්ත Load කරන Function එක
+function loadGRNData() {
+    try {
+        if (fs.existsSync(GRN_FILE)) {
+            const data = fs.readFileSync(GRN_FILE, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (err) {
+        console.error("Error reading file:", err);
+    }
+    return [
+        { 
+            id: 1, 
+            itemCode: "ITM-001", 
+            supplier: "Apex Textiles", 
+            itemName: "Cotton Fabric", 
+            quantity: 500, 
+            unitPrice: 250, 
+            status: "Active", 
+            date: new Date() 
+        }
+    ];
+}
+
+// දත්ත File එකට Save කරන Function එක
+function saveGRNData() {
+    try {
+        fs.writeFileSync(GRN_FILE, JSON.stringify(grnList, null, 2), 'utf8');
+    } catch (err) {
+        console.error("Error saving file:", err);
+    }
+}
+
+// Users දත්ත
 const users = [
     {
         id: 1,
@@ -29,7 +65,7 @@ const users = [
         role: 'staff'
     },
     {
-        id: 3, // Unique ID එකක් ලබා දෙන ලදී
+        id: 3,
         email: 'Kavindu@erp.com',
         passwordHash: bcrypt.hashSync('Kavindu41', 10),
         name: 'Kavindu',
@@ -37,28 +73,16 @@ const users = [
     }     
 ];
 
+// Inventory දත්ත
 let inventory = [
     { id: 1, name: 'Fabric', sku: 'LP-001', stock: 10, price: 150000 },
     { id: 2, name: 'Care Label', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
-const fs = require('fs');
-const path = require('path');
+// GRN List එක Load කරගැනීම (එක් වරක් පමණක් Declare කර ඇත)
+let grnList = loadGRNData();
 
-
-let grnList = [
-    { 
-        id: 1, 
-        itemCode: "ITM-001",
-        supplier: "Apex Textiles", 
-        itemName: "Cotton Fabric", 
-        quantity: 500, 
-        unitPrice: 250, 
-        status: "Active",
-        date: new Date() 
-    }
-];
-
+// Auth Middleware
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -72,7 +96,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// Auth Login Route
+// Login Route
 app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     const user = users.find(u => u.email === email);
@@ -138,6 +162,8 @@ app.post('/api/grn', authenticateToken, (req, res) => {
         date: new Date()
     };
     grnList.push(newGRN);
+    saveGRNData(); // File එකට Save කිරීම
+
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
 
@@ -148,41 +174,14 @@ app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     grnList = grnList.filter(item => Number(item.id) !== id);
 
     if (grnList.length < initialLength) {
+        saveGRNData(); // Delete වූ විට Update කිරීම
         res.json({ success: true, message: "GRN Cancelled successfully!" });
     } else {
         res.status(404).json({ success: false, message: "GRN item not found!" });
     }
 });
 
-function loadGRNData() {
-    try {
-        if (fs.existsSync(GRN_FILE)) {
-            const data = fs.readFileSync(GRN_FILE, 'utf8');
-            return JSON.parse(data);
-        }
-    } catch (err) {
-        console.error("Error reading file:", err);
-    }
-    return [
-        { 
-            id: 1, 
-            itemCode: "ITM-001", 
-            supplier: "Apex Textiles", 
-            itemName: "Cotton Fabric", 
-            quantity: 500, 
-            unitPrice: 250, 
-            status: "Active", 
-            date: new Date() 
-        }
-    ];
-    
-}
- grnList = loadGRNData();
-
-
-
-// Server Listener (අවසානයේම තබන්න)
+// Server Listener
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`ERP Server running on port ${PORT}`);
 });
-
