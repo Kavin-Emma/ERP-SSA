@@ -34,8 +34,18 @@ let inventory = [
     { id: 2, name: 'Mouse', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
+// GRN List එකෙහි itemCode සහ status එකතු කර ඇත
 let grnList = [
-    { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
+    { 
+        id: 1, 
+        itemCode: "ITM-001",
+        supplier: "Apex Textiles", 
+        itemName: "Cotton Fabric", 
+        quantity: 500, 
+        unitPrice: 250, 
+        status: "Active",
+        date: new Date() 
+    }
 ];
 
 function authenticateToken(req, res, next) {
@@ -100,44 +110,41 @@ app.delete('/api/inventory/:id', authenticateToken, (req, res) => {
 });
 
 // GRN Routes
-// GRN Routes
 app.get('/api/grn', authenticateToken, (req, res) => {
-    // Cancel නොවූ (Active) GRN පමණක් හෝ සියලුම GRN යැවීම
     res.json({ success: true, data: grnList });
 });
 
 app.post('/api/grn', authenticateToken, (req, res) => {
-    const { supplier, itemName, quantity, unitPrice } = req.body;
+    const { itemCode, supplier, itemName, quantity, unitPrice } = req.body;
     const newGRN = {
-        id: grnList.length + 1,
+        id: Date.now(),
+        itemCode: itemCode || `ITM-00${grnList.length + 1}`,
         supplier,
         itemName,
         quantity: Number(quantity),
         unitPrice: Number(unitPrice),
-        status: 'Active', // Default status එක Active ලෙස සැකසීම
+        status: 'Active',
         date: new Date()
     };
     grnList.push(newGRN);
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
 
-// GRN Cancel කිරීම හෝ Delete කිරීම සඳහා නව Route එක
+// GRN Cancel Route
 app.delete('/api/grn/:id', authenticateToken, (req, res) => {
-    const { id } = req.params;
-    
-    // Memory Array එකෙන් GRN එක සම්පූර්ණයෙන්ම ඉවත් කිරීම
-    grnList = grnList.filter(item => item.id != id);
+    const id = parseInt(req.params.id);
+    const initialLength = grnList.length;
 
-    /* (සටහන: Array එකෙන් Delete කරන්නේ නැතිව Status එක 'Cancelled' කිරීමට අවශ්‍ය නම් පහත කේතය භාවිත කරන්න)
-    const grn = grnList.find(item => item.id == id);
-    if (grn) {
-        grn.status = 'Cancelled';
+    grnList = grnList.filter(item => Number(item.id) !== id);
+
+    if (grnList.length < initialLength) {
+        res.json({ success: true, message: "GRN Cancelled successfully!" });
+    } else {
+        res.status(404).json({ success: false, message: "GRN item not found!" });
     }
-    */
-
-    res.json({ success: true, message: "GRN Cancelled successfully!" });
 });
 
-app.listen(PORT, () => {
+// Server Listener (අවසානයේම තිබිය යුතුය)
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`ERP Server running on port ${PORT}`);
 });
