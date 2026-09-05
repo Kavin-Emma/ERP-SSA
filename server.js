@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -14,6 +15,7 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 const GRN_FILE = path.join(__dirname, 'grn.json');
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/my_database';
 
 // JSON File එකෙන් දත්ත Load කරන Function එක
 function loadGRNData() {
@@ -79,7 +81,7 @@ let inventory = [
     { id: 2, name: 'Care Label', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
-// GRN List එක Load කරගැනීම (එක් වරක් පමණක් Declare කර ඇත)
+// GRN List එක Load කරගැනීම
 let grnList = loadGRNData();
 
 // Auth Middleware
@@ -162,7 +164,7 @@ app.post('/api/grn', authenticateToken, (req, res) => {
         date: new Date()
     };
     grnList.push(newGRN);
-    saveGRNData(); // File එකට Save කිරීම
+    saveGRNData();
 
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
@@ -174,14 +176,21 @@ app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     grnList = grnList.filter(item => Number(item.id) !== id);
 
     if (grnList.length < initialLength) {
-        saveGRNData(); // Delete වූ විට Update කිරීම
+        saveGRNData();
         res.json({ success: true, message: "GRN Cancelled successfully!" });
     } else {
         res.status(404).json({ success: false, message: "GRN item not found!" });
     }
 });
 
-// Server Listener
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`ERP Server running on port ${PORT}`);
-});
+// MongoDB එකට සම්බන්ධ වී Server එක ක්‍රියාත්මක කිරීම
+mongoose.connect(MONGO_URI)
+  .then(() => {
+    console.log('MongoDB සාර්ථකව සම්බන්ධ විය!');
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`ERP Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('MongoDB සම්බන්ධ වීමේ දෝෂයක්:', err);
+  });
