@@ -15,7 +15,7 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 const GRN_FILE = path.join(__dirname, 'grn.json');
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/my_database';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://Kavin-Emma:<0713952438-Kk>@cluster0.piron4e.mongodb.net/?appName=Cluster0';
 
 // JSON File එකෙන් දත්ත Load කරන Function එක
 function loadGRNData() {
