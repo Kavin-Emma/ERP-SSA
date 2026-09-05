@@ -51,12 +51,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// Health Check Root Route
-app.get('/', (req, res) => {
-    res.send('ERP Backend API is running successfully!');
-});
-
-// 1. Login Endpoint
+// Auth Login Route
 app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     const user = users.find(u => u.email === email);
@@ -74,7 +69,7 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-// 2. Inventory Routes
+// Inventory Routes
 app.get('/api/inventory', authenticateToken, (req, res) => {
     res.json({ success: true, data: inventory });
 });
@@ -104,7 +99,7 @@ app.delete('/api/inventory/:id', authenticateToken, (req, res) => {
     res.json({ success: true, message: 'Item deleted' });
 });
 
-// 3. GRN Routes
+// GRN Routes
 app.get('/api/grn', authenticateToken, (req, res) => {
     res.json({ success: true, data: grnList });
 });
