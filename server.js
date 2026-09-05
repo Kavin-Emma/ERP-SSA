@@ -34,18 +34,8 @@ let inventory = [
     { id: 2, name: 'Mouse', sku: 'MS-002', stock: 3, price: 2500 }
 ];
 
-// GRN List එකෙහි itemCode සහ status එකතු කර ඇත
 let grnList = [
-    { 
-        id: 1, 
-        itemCode: "ITM-001",
-        supplier: "Apex Textiles", 
-        itemName: "Cotton Fabric", 
-        quantity: 500, 
-        unitPrice: 250, 
-        status: "Active",
-        date: new Date() 
-    }
+    { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
 ];
 
 function authenticateToken(req, res, next) {
@@ -115,36 +105,19 @@ app.get('/api/grn', authenticateToken, (req, res) => {
 });
 
 app.post('/api/grn', authenticateToken, (req, res) => {
-    const { itemCode, supplier, itemName, quantity, unitPrice } = req.body;
+    const { supplier, itemName, quantity, unitPrice } = req.body;
     const newGRN = {
-        id: Date.now(),
-        itemCode: itemCode || `ITM-00${grnList.length + 1}`,
+        id: grnList.length + 1,
         supplier,
         itemName,
         quantity: Number(quantity),
         unitPrice: Number(unitPrice),
-        status: 'Active',
         date: new Date()
     };
     grnList.push(newGRN);
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
 
-// GRN Cancel Route
-app.delete('/api/grn/:id', authenticateToken, (req, res) => {
-    const id = parseInt(req.params.id);
-    const initialLength = grnList.length;
-
-    grnList = grnList.filter(item => Number(item.id) !== id);
-
-    if (grnList.length < initialLength) {
-        res.json({ success: true, message: "GRN Cancelled successfully!" });
-    } else {
-        res.status(404).json({ success: false, message: "GRN item not found!" });
-    }
-});
-
-// Server Listener (අවසානයේම තිබිය යුතුය)
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`ERP Server running on port ${PORT}`);
 });
