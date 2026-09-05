@@ -46,16 +46,29 @@ function renderGRNTable(grnList) {
     grnList.forEach(item => {
         const row = document.createElement('tr');
         const total = (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0);
+       
+        // Date එක ආරක්ෂිතව parse කර ගැනීම
+        let formattedDate = '-';
+        if (item.date) {
+            const d = new Date(item.date);
+            if (!isNaN(d.getTime())) {
+                formattedDate = d.toISOString().split('T')[0]; // YYYY-MM-DD ලෙස දිනය ලබා දෙයි
+            }
+        } 
+
 
         row.innerHTML = `
             <td>${item.id}</td>
-            <td>${item.itemcode || '-'}</td>
+            <td>${item.itemCode || '-'}</td>
             <td>${item.supplier || '-'}</td>
             <td>${item.itemName || '-'}</td>
             <td>${item.quantity || 0}</td>
             <td>${item.unitPrice || 0}</td>
             <td>${total}</td>
             <td>${formattedDate}</td>
+            <td>
+        <span class="badge ${item.status === 'Cancelled' ? 'bg-danger' : 'bg-success'}">
+            ${item.status || 'Active'}
             <td class="action-cell">
                 <button onclick="cancelGRN(${item.id})" class="btn btn-danger">
                     <i class="fa-solid fa-xmark"></i> Cancel
@@ -69,7 +82,7 @@ function renderGRNTable(grnList) {
 // 3. නව GRN එකක් එකතු කිරීම (Submit)
 async function handleGRNSubmit(e) {
     e.preventDefault();
-    const itemcode = document.getElementById('Item Code').value;
+    const itemCode = document.getElementById('Item Code').value;
     const supplier = document.getElementById('supplier').value;
     const itemName = document.getElementById('itemName').value;
     const quantity = document.getElementById('quantity').value;
