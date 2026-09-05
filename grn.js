@@ -49,6 +49,7 @@ function renderGRNTable(grnList) {
 
         row.innerHTML = `
             <td>${item.id}</td>
+            <td>${item.itemcode || '-'}</td>
             <td>${item.supplier || '-'}</td>
             <td>${item.itemName || '-'}</td>
             <td>${item.quantity || 0}</td>
