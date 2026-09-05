@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static(__dirname)); // Static HTML/JS files Serve කිරීමට
+app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
@@ -50,6 +50,11 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
+// Health Check Root Route
+app.get('/', (req, res) => {
+    res.send('ERP Backend API is running successfully!');
+});
 
 // 1. Login Endpoint
 app.post('/api/auth/login', (req, res) => {
