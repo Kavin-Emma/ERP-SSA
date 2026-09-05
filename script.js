@@ -5,7 +5,8 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('[https://erp-ssa-production.up.railway.app](https://erp-ssa-production.up.railway.app)', {
+        // Markdown formatting ඉවත් කර නිවැරදි API endpoint path එක ලබා දෙන්න:
+        const response = await fetch('https://erp-ssa-production.up.railway.app/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -15,7 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
         const data = await response.json();
 
-        if (data.success) {
+        if (response.ok && data.success) {
             // Save Token and User Info to LocalStorage
             localStorage.setItem('erp_token', data.token);
             localStorage.setItem('erp_user', JSON.stringify(data.user));
@@ -23,7 +24,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             alert('Login successful!');
             window.location.href = 'dashboard.html'; // Dashboard එකට මාරු වීම
         } else {
-            alert('Login failed: ' + data.message);
+            alert('Login failed: ' + (data.message || 'Invalid Credentials'));
         }
     } catch (error) {
         console.error('Error during login:', error);
