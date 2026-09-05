@@ -12,6 +12,7 @@ app.use(express.static(__dirname));
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key';
 
+// Dummy Databases
 const users = [
     {
         id: 1,
@@ -38,6 +39,7 @@ let grnList = [
     { id: 1, supplier: "Apex Textiles", itemName: "Cotton Fabric", quantity: 500, unitPrice: 250, date: new Date() }
 ];
 
+// Authentication Middleware
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -51,7 +53,7 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// Auth Login Route
+// 1. Auth Login Route
 app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     const user = users.find(u => u.email === email);
@@ -69,7 +71,7 @@ app.post('/api/auth/login', (req, res) => {
     });
 });
 
-// Inventory Routes
+// 2. Inventory Routes
 app.get('/api/inventory', authenticateToken, (req, res) => {
     res.json({ success: true, data: inventory });
 });
@@ -99,31 +101,28 @@ app.delete('/api/inventory/:id', authenticateToken, (req, res) => {
     res.json({ success: true, message: 'Item deleted' });
 });
 
-// GRN Routes
-// GRN Routes
+// 3. GRN Routes
 app.get('/api/grn', authenticateToken, (req, res) => {
-    // Cancel නොවූ (Active) GRN පමණක් හෝ සියලුම GRN යැවීම
     res.json({ success: true, data: grnList });
 });
 
 app.post('/api/grn', authenticateToken, (req, res) => {
     const { supplier, itemName, quantity, unitPrice } = req.body;
     const newGRN = {
-        id: grnList.length + 1,
+        id: Date.now(), // ID එක unique ලෙස තබා ගැනීමට Date.now() භාවිතය
         supplier,
         itemName,
         quantity: Number(quantity),
         unitPrice: Number(unitPrice),
-        status: 'Active', // Default status එක Active ලෙස සැකසීම
+        status: 'Active',
         date: new Date()
     };
     grnList.push(newGRN);
     res.status(201).json({ success: true, message: "GRN saved successfully!", data: newGRN });
 });
 
-// GRN Cancel කිරීම හෝ Delete කිරීම සඳහා නව Route එක
 app.delete('/api/grn/:id', authenticateToken, (req, res) => {
-    const id = parseInt(req.params.id); // ID එක Number එකක් බවට හරවා ගැනීම
+    const id = parseInt(req.params.id);
 
     const initialLength = grnList.length;
     grnList = grnList.filter(item => Number(item.id) !== id);
@@ -133,4 +132,9 @@ app.delete('/api/grn/:id', authenticateToken, (req, res) => {
     } else {
         res.status(404).json({ success: false, message: "GRN item not found!" });
     }
+});
+
+// 4. Server Listener (ගොනුවේ අවසානයටම තබන්න)
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`ERP Server running on port ${PORT}`);
 });
