@@ -13,7 +13,16 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             body: JSON.stringify({ email, password })
         });
 
-        const data = await response.json();
+        // Response එක JSON ද යන්න පරීක්ෂා කිරීම
+        const contentType = response.headers.get('content-type');
+        let data = {};
+        
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const rawText = await response.text();
+            throw new Error(`Server returned non-JSON response (${response.status}): ${rawText.substring(0, 100)}`);
+        }
 
         if (response.ok && data.success) {
             localStorage.setItem('erp_token', data.token);
