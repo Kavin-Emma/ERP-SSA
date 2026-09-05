@@ -5,7 +5,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('https://erp-ssa-production.up.railway.app/api/auth/login', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -26,6 +26,6 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         }
     } catch (error) {
         console.error('Error during login:', error);
-        alert('Server Connection Error!');
+        alert('Server Connection Error: ' + error.message);
     }
 });
